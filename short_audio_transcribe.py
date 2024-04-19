@@ -101,7 +101,7 @@ if __name__ == "__main__":
             os.remove(output_file + ".bak")
         os.rename(output_file, output_file + ".bak")
 
-    language_id = Languages.JP.value    
+    # language_id = Languages.JP.value    
 
     for i, wavfile in enumerate(wav_files):
         # try to load file as audio
@@ -118,18 +118,19 @@ if __name__ == "__main__":
             #save_path = parent_dir+"/"+ speaker + "/" + f"ada_{i}.wav"
             # torchaudio.save(save_path, wav, target_sr, channels_first=True)
             # transcribe text
-            save_path = parent_dir+"/"+ speaker + "/" + f"-{i}.wav"
+            save_path = parent_dir+"/"+ speaker + f"-{i}.wav"
             file_name = os.path.basename(wavfile)
             lang, text = transcribe_one(wavfile)
             if lang not in list(lang2token.keys()):
                 print(f"{lang} not supported, ignoring\n")
                 continue
+
             #text = "ZH|" + text + "\n"
             if model_type == "Bert":
-                text = f"{file_name}|{speaker_name}|{language_id}|{text}\n"
+                text = f"{file_name}|{speaker_name}|JP|{text}\n"
             else:
                 #vocal_path|speaker_name|language|text
-                text = f"{save_path}|{speaker_name}|{language_id}|{text}\n"
+                text = f"{save_path}|{speaker_name}|ja|{text}\n"
             #text = f"./Data/{model_name}/wavs/{wavfile}|" + f"{model_name}|" +lang2token[lang] + text + "\n"
             speaker_annos.append(text)
             
