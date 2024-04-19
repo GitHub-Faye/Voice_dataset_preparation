@@ -47,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument("--languages", default="CJE")
     parser.add_argument("--whisper_size", default="medium")
     parser.add_argument("--speaker_name", type=str, required=True)
-
+    parser.add_argument("--model_type", type=str, default="Bert")
 
     args = parser.parse_args()
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     model_name = args.speaker_name
     speaker_name = args.speaker_name
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
+    model_type = args.model_type
     if args.languages == "CJE":
         lang2token = {
             'zh': "ZH|",
@@ -118,13 +118,18 @@ if __name__ == "__main__":
             #save_path = parent_dir+"/"+ speaker + "/" + f"ada_{i}.wav"
             # torchaudio.save(save_path, wav, target_sr, channels_first=True)
             # transcribe text
+            save_path = parent_dir+"/"+ speaker + "/" + f"-{i}.wav"
             file_name = os.path.basename(wavfile)
             lang, text = transcribe_one(wavfile)
             if lang not in list(lang2token.keys()):
                 print(f"{lang} not supported, ignoring\n")
                 continue
             #text = "ZH|" + text + "\n"
-            text = f"{file_name}|{speaker_name}|{language_id}|{text}\n"
+            if model_type == "Bert":
+                text = f"{file_name}|{speaker_name}|{language_id}|{text}\n"
+            else:
+                #vocal_path|speaker_name|language|text
+                text = f"{save_path}|{speaker_name}|{language_id}|{text}\n"
             #text = f"./Data/{model_name}/wavs/{wavfile}|" + f"{model_name}|" +lang2token[lang] + text + "\n"
             speaker_annos.append(text)
             
